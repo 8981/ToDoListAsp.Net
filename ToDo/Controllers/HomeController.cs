@@ -21,6 +21,11 @@ public class HomeController : Controller
         return View(toDoViewModel);
     }
 
+    /// <summary>
+    /// Fill in the form
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     public JsonResult PopulateForm(int id)
     {
@@ -28,6 +33,10 @@ public class HomeController : Controller
         return Json(todo);
     }
 
+    /// <summary>
+    /// getting all items for drawing all tasks on home page 
+    /// </summary>
+    /// <returns></returns>
     internal ToDoViewModel GetAllToDos()
     {
         List<ToDoItem> toDoItems = new List<ToDoItem>();
@@ -70,6 +79,11 @@ public class HomeController : Controller
                 };
     }
 
+    /// <summary>
+    /// getting items by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     internal ToDoItem GetById(int id)
         {
             ToDoItem todo = new();
