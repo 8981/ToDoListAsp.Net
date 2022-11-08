@@ -15,7 +15,7 @@
 function populateForm(i) {
     $.ajax({
         url: 'Home/PopulateForm',
-        type: 'Get',
+        type: 'GET',
         data: {
             id: i
         },

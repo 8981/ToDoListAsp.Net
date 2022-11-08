@@ -153,7 +153,7 @@ public class HomeController : Controller
                 return Json(new {});
     }
 
-    public RedirectResult Update(ToDoItem toDoItem)
+    public RedirectResult Update(ToDoItem todo)
     {
         using (SqliteConnection connection = 
                 new SqliteConnection("Data Source=db.sqlite"))
@@ -161,7 +161,7 @@ public class HomeController : Controller
                     using (var tableCmd = connection.CreateCommand())
                     {
                         connection.Open();
-                        tableCmd.CommandText = $"UPDATE todo SET name = '{toDoItem.Name}' WHERE Id = '{toDoItem.Id}'";
+                        tableCmd.CommandText = $"UPDATE todo SET name = '{todo.Name}' WHERE Id = '{todo.Id}'";
                         try
                         {
                             tableCmd.ExecuteNonQuery();
@@ -173,6 +173,6 @@ public class HomeController : Controller
                     }
                 }
 
-                return Redirect("https://localhost:5009/");
+                return Redirect("http://localhost:5009");
     }
 }
