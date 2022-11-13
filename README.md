@@ -3,10 +3,6 @@
 
 All todo tasks stored into db sqlite
 
-## Usage
-```
-```
-
 ## Options
 ### `Add ToDo`
 Add todo items to todo list.
