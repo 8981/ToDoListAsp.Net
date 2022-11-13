@@ -41,42 +41,41 @@ public class HomeController : Controller
     {
         List<ToDoItem> toDoItems = new List<ToDoItem>();
 
-        using (SqliteConnection connection =
-                new SqliteConnection("Data Source=db.sqlite"))
-                {
-                    using (var tableCmd = connection.CreateCommand())
-                    {
-                        connection.Open();
-                        tableCmd.CommandText = "SELECT * FROM todo";
+        using (SqliteConnection connection = new SqliteConnection("Data Source=db.sqlite"))
+        {
+            using (var tableCmd = connection.CreateCommand())
+            {
+                connection.Open();
+                tableCmd.CommandText = "SELECT * FROM todo";
 
-                        using (var reader = tableCmd.ExecuteReader())
+                using (var reader = tableCmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
                         {
-                            if (reader.HasRows)
-                            {
-                                while (reader.Read())
+                            toDoItems.Add(
+                                new ToDoItem
                                 {
-                                    toDoItems.Add(
-                                        new ToDoItem
-                                        {
-                                            Id = reader.GetInt32(0),
-                                            Name = reader.GetString(1)
-                                        });
-                                }
-                            }
-                            else
-                            {
-                                return new ToDoViewModel
-                                {
-                                    TodoList = toDoItems
-                                };
-                            }
+                                    Id = reader.GetInt32(0),
+                                    Name = reader.GetString(1)
+                                });
+                        }
+                    }
+                    else
+                    {
+                        return new ToDoViewModel
+                        {
+                            TodoList = toDoItems
                         };
                     }
-                }
-                return new ToDoViewModel
-                {
-                    TodoList = toDoItems
                 };
+            }
+        }
+        return new ToDoViewModel
+        {
+            TodoList = toDoItems
+        };
     }
 
     /// <summary>
@@ -85,55 +84,54 @@ public class HomeController : Controller
     /// <param name="id"></param>
     /// <returns></returns>
     internal ToDoItem GetById(int id)
+    {
+        ToDoItem todo = new();
+
+        using (var connection = new SqliteConnection("Data Source=db.sqlite"))
         {
-            ToDoItem todo = new();
-
-            using (var connection =
-                   new SqliteConnection("Data Source=db.sqlite"))
+            using (var tableCmd = connection.CreateCommand())
             {
-                using (var tableCmd = connection.CreateCommand())
+                connection.Open();
+                tableCmd.CommandText = $"SELECT * FROM todo Where Id = '{id}'";
+
+                using (var reader = tableCmd.ExecuteReader())
                 {
-                    connection.Open();
-                    tableCmd.CommandText = $"SELECT * FROM todo Where Id = '{id}'";
-
-                    using (var reader = tableCmd.ExecuteReader())
+                    if (reader.HasRows)
                     {
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            todo.Id = reader.GetInt32(0);
-                            todo.Name = reader.GetString(1);
-                        }
-                        else
-                        {
-                            return todo;
-                        }
-                    };
-                }
+                        reader.Read();
+                        todo.Id = reader.GetInt32(0);
+                        todo.Name = reader.GetString(1);
+                    }
+                    else
+                    {
+                        return todo;
+                    }
+                };
             }
-
-            return todo;
         }
+
+        return todo;
+    }
     public RedirectResult Insert(ToDoItem todo)
     {
         using (SqliteConnection connection =
                 new SqliteConnection("Data Source=db.sqlite"))
+        {
+            using (var tableCmd = connection.CreateCommand())
+            {
+                connection.Open();
+                tableCmd.CommandText = $"INSERT INTO todo (name) VALUES ('{todo.Name}')";
+                try
                 {
-                    using (var tableCmd = connection.CreateCommand())
-                    {
-                        connection.Open();
-                        tableCmd.CommandText = $"INSERT INTO todo (name) VALUES ('{todo.Name}')";
-                        try
-                        {
-                            tableCmd.ExecuteNonQuery();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
+                    tableCmd.ExecuteNonQuery();
                 }
-                return Redirect("http://localhost:5009");
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+        return Redirect("http://localhost:5009");
     }
 
     [HttpPost]
@@ -141,38 +139,37 @@ public class HomeController : Controller
     {
         using (SqliteConnection connection =
                 new SqliteConnection("Data Source=db.sqlite"))
-                {
-                    using (var tableCmd = connection.CreateCommand())
-                    {
-                        connection.Open();
-                        tableCmd.CommandText = $"DELETE from todo WHERE Id = '{id}'";
-                        tableCmd.ExecuteNonQuery();
-                    }
-                }
+        {
+            using (var tableCmd = connection.CreateCommand())
+            {
+                connection.Open();
+                tableCmd.CommandText = $"DELETE from todo WHERE Id = '{id}'";
+                tableCmd.ExecuteNonQuery();
+            }
+        }
 
-                return Json(new {});
+        return Json(new { });
     }
 
     public RedirectResult Update(ToDoItem todo)
     {
-        using (SqliteConnection connection = 
-                new SqliteConnection("Data Source=db.sqlite"))
+        using (SqliteConnection connection = new SqliteConnection("Data Source=db.sqlite"))
+        {
+            using (var tableCmd = connection.CreateCommand())
+            {
+                connection.Open();
+                tableCmd.CommandText = $"UPDATE todo SET name = '{todo.Name}' WHERE Id = '{todo.Id}'";
+                try
                 {
-                    using (var tableCmd = connection.CreateCommand())
-                    {
-                        connection.Open();
-                        tableCmd.CommandText = $"UPDATE todo SET name = '{todo.Name}' WHERE Id = '{todo.Id}'";
-                        try
-                        {
-                            tableCmd.ExecuteNonQuery();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
+                    tableCmd.ExecuteNonQuery();
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
 
-                return Redirect("http://localhost:5009");
+        return Redirect("http://localhost:5009");
     }
 }
