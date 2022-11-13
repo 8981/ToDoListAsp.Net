@@ -114,8 +114,7 @@ public class HomeController : Controller
     }
     public RedirectResult Insert(ToDoItem todo)
     {
-        using (SqliteConnection connection =
-                new SqliteConnection("Data Source=db.sqlite"))
+        using (SqliteConnection connection = new SqliteConnection("Data Source=db.sqlite"))
         {
             using (var tableCmd = connection.CreateCommand())
             {
@@ -137,8 +136,7 @@ public class HomeController : Controller
     [HttpPost]
     public JsonResult Delete(int id)
     {
-        using (SqliteConnection connection =
-                new SqliteConnection("Data Source=db.sqlite"))
+        using (SqliteConnection connection = new SqliteConnection("Data Source=db.sqlite"))
         {
             using (var tableCmd = connection.CreateCommand())
             {
